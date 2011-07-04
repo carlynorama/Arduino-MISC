@@ -1,0 +1,130 @@
+/*
+ Random Stepper Motor Motion
+ by Carlyn Maw based on 2005 code by Tom Igoe
+
+ This program moves a 4 phase unipolar stepper motor a random number of 
+ steps in one direction, then a different number of steps in the opposite
+ direction, indefinitely. Speed of the motor is increased with the size of
+ the random number.
+ 
+
+ Created 28 January 2010
+ Updated 22 February 2010
+
+ */
+
+int motorStep[4];        // array to hold the stepping sequence
+int thisStep = 0;        // which step of the sequence we're on
+long randomNumber;      // random muber that will be the number of steps the motor will move
+int mySpeed;            // the delay interval between steps. The smaller the faster. 
+
+
+
+//  function prototypes:
+void stepMotor(int whatStep, int speed);
+void blink(int howManyTimes);
+
+
+void setup() {
+  /*
+     save values for the 4 possible states of the stepper motor leads
+   in a 4-byte array.  the stepMotor method will step through 
+   these four states to move the motor. This is a way to set the 
+   value on four pins at once.  The  digital pins 8 through 13 are 
+   represented in memory as a byte called PORTB. We will set
+   PORTB to each  of the values of the array in order to set 
+   digital pins 8, 9, 10, and 11 at once with each step.
+
+   We're representing the numbers as hexadecimal values below, but
+   it'd be nicer to represent them as binary numbers, so that the 
+   representation shows us visually which pins of PORTB we're 
+   affecting.
+   */
+  motorStep[0] = B00001000;
+  motorStep[1] = B00000100;
+  motorStep[2] = B00000010;
+  motorStep[3] = B00000001;
+  
+  /*
+  //alternate step array with 1/2 steps
+  motorStep[0] = B00001000;
+  motorStep[1] = B00001100;
+  motorStep[2] = B00000100;
+  motorStep[3] = B00000110;
+  motorStep[4] = B00000010;
+  motorStep[5] = B00000011;
+  motorStep[6] = B00000001;
+  motorStep[7] = B00001001;
+  */
+
+  /*
+   The DDRB register is the Data Direction Register.  It sets whether
+   the pins of PORTB are inputs or outputs. a 1 in a given position 
+   makes that pin an output.  A 0 makes it an input.
+   */
+
+  // set the last 4 pins of port b to output:
+  DDRB = 0x0F; //0b0000_1111;
+
+  // set all the pins of port b low:
+  PORTB = 0; //0b0000_0000;
+
+  // start  program with a half-second delay:
+  delay(500);  
+
+  // blink the reset LED 3 times:
+  blink(3);
+  
+  //seed random from analog pin so pattern is different everytime
+  randomSeed(analogRead(0));
+}
+
+void loop() {
+
+  /*
+  move motor forward a random number of steps. 
+   note: by doing a modulo operation on i (i % 4), 
+   we can let i go as high as we want, and thisStep 
+   will equal 0,1,2,3,0,1,2,3, etc. until the end 
+   of the for-next loop.
+   */
+   
+   
+  // the max is higher than the number of steps it takes for 
+  // the small gear head to turn b/c it is attached to a larger 
+  // gearhead.
+  randomNumber = random(5,100); 
+  mySpeed = 1000/randomNumber;
+  for (int i = 1; i<= randomNumber; i++) {
+    thisStep = i % 4;
+    stepMotor(thisStep, mySpeed);
+  }
+
+  // move motor backward   
+  randomNumber = random(5,100); 
+  mySpeed = 1000/randomNumber; 
+  for (int i = randomNumber; i >=1; i--) {
+    thisStep = i % 4;
+    stepMotor(thisStep, mySpeed);
+  }
+}
+
+//Step the motor forward one step:
+void stepMotor(int whatStep, int speed) {
+  // sets the value of the eight pins of port c to whatStep
+  PORTB = motorStep[whatStep];
+
+ // vary this delay as needed to make your stepper step:
+  delay(speed); 
+}
+
+// Blink the reset LED:
+void blink(int howManyTimes) {
+  int i;
+  for (i=0; i< howManyTimes; i++) {
+    digitalWrite(13, HIGH);
+    delay(200);
+    digitalWrite(13, LOW);
+    delay(200);  
+  }
+}

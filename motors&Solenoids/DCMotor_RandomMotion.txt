@@ -1,0 +1,93 @@
+/*
+ Random DC Motor Motion
+ by Carlyn Maw 
+ 
+ This program moves a DC motor a random amount in one direction, then a different 
+ amount in the opposite direction, indefinitely. Speed of the motor is increased
+ with the size of the random number.
+ 
+
+ Created 22 February 2010
+ Updated 
+
+ */
+
+  const int motorPin1 = 7;    // H-bridge leg 1 (pin 2, 1A)
+  const int motorPin2 = 6;    // H-bridge leg 2 (pin 7, 2A)
+  const int motorPulsePin = 11;    // H-bridge enable pin
+  
+  const int myMotorPWMin = 220;  // min PWM value based on your motor and power supply
+  const int myMotorPWMax = 255; // max PWM value based on your motor and power supply
+  
+  const int myMotorCyclesMin = 6000;  // min number of program cycles for motor to be on
+  const int myMotorCyclesMax = 25000; // max number of program cycles for motor to be on
+  const int driftFactor = 800;  // compensates for systems tendency to drift left
+  
+
+int motorCycles; //amount of time motor will move in any direction
+long rNum;      // random muber that will be the number of steps the motor will move
+int mySpeed =250;            // the delay interval between steps. The smaller the faster. 
+
+
+
+//  function prototypes:
+void blink(int howManyTimes);
+
+
+void setup() {
+
+  //Set pin modes 
+   pinMode(motorPin1, OUTPUT); 
+    pinMode(motorPin2, OUTPUT); 
+    pinMode(motorPulsePin, OUTPUT);
+
+  
+  // start  program with a half-second delay:
+  delay(500);  
+
+  // blink the reset LED 3 times:
+  blink(3);
+  
+  //seed random from analog pin so pattern is different everytime
+  randomSeed(analogRead(0));
+
+}
+
+void loop() {
+
+  rNum = random(0,100);
+  motorCycles = rNum*(myMotorCyclesMax-myMotorCyclesMin)/100 + myMotorCyclesMin;
+  mySpeed = (100-rNum)*(myMotorPWMax-myMotorPWMin)/100 + myMotorPWMin;
+  motorCycles = motorCycles + driftFactor; // this motor trends to the left, the driftFactor compensates
+  
+  for (int i = 1; i<= motorCycles; i++) {
+      analogWrite(motorPulsePin, mySpeed);
+      digitalWrite(motorPin1, LOW);   // set leg 1 of the H-bridge low
+      digitalWrite(motorPin2, HIGH);  // set leg 2 of the H-bridge high
+
+  }
+
+  // move motor backward 
+  rNum = random(0,100);  
+  motorCycles = rNum*(myMotorCyclesMax-myMotorCyclesMin)/100 + myMotorCyclesMin;
+  mySpeed = (100-rNum)*(myMotorPWMax-myMotorPWMin)/100 + myMotorPWMin;
+
+  for (int i = 1; i<= motorCycles; i++) {
+      analogWrite(motorPulsePin, mySpeed);
+      digitalWrite(motorPin2, LOW);   // set leg 2 of the H-bridge low
+      digitalWrite(motorPin1, HIGH);  // set leg 1 of the H-bridge high
+  }
+}
+
+
+
+// Blink the reset LED:
+void blink(int howManyTimes) {
+  int i;
+  for (i=0; i< howManyTimes; i++) {
+    digitalWrite(13, HIGH);
+    delay(200);
+    digitalWrite(13, LOW);
+    delay(200);  
+  }
+}

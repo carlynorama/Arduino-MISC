@@ -1,0 +1,73 @@
+/*
+*Row Column Scanning
+ *
+ * Super Super Basic Row Column Scanning w/Serial Out w/ Case Statement
+ *
+ * Created by Carlyn Maw 2010 for Take Apart Tuesday No. 0007
+ * Updated
+ */
+
+
+int OutPins[] = { 
+  10, 11, 12, 13 }; // an array of pin numbers that get sent high
+int InPins[] = { 
+  2,3,4,5,6,7,8,9 }; // an array of pin numbers that get examined
+//corresponds to 
+int num_OutPins = 4;                  // the number of pins (i.e. the length of the array)
+int num_InPins = 8;                  // the number of pins (i.e. the length of the array)
+
+void setup()
+{
+  int i;
+
+  for (i = 0; i < num_OutPins; i++) {  // the array elements are numbered from 0 to num_pins - 1
+    pinMode(OutPins[i], OUTPUT);      // set each pin as an output
+  }
+
+  for (i = 0; i < num_OutPins; i++) {   // the array elements are numbered from 0 to num_pins - 1
+    pinMode(InPins[i], INPUT);      // set each pin as an output
+  }
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  int i;
+  int r;
+  int buttonVal;
+  int caseVar;
+
+  for (i = 0; i < num_OutPins; i++) { // loop through each Out pin...
+    digitalWrite(OutPins[i], HIGH);   // turning it on,
+    caseVar = i*num_InPins; //to create spacing for all possible combinations
+    for (r = 0; r < num_InPins; r++) { // loop through each In pin...
+      buttonVal = digitalRead(InPins[r]);   // turning it on
+      if(buttonVal) {
+        caseVar = caseVar+ r;
+
+        switch (caseVar) {
+        case 0:
+          Serial.println("M +");
+          break;
+        case 1:
+          Serial.println("M -");
+          break;
+        case 2:
+          Serial.println("M Subtotal");
+          break;
+        case 3:
+          Serial.println("M *");
+          break;
+        case 4:
+          Serial.println("etc.");
+          break;
+        default:
+          Serial.println(caseVar);
+        }
+
+
+      }
+    }
+    digitalWrite(OutPins[i], LOW);    // and turning it off.
+  }
+}

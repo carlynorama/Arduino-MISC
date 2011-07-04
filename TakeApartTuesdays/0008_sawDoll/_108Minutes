@@ -1,0 +1,114 @@
+/*
+This program was written to control the 
+SAW 3 Digital Voice Recorder available at
+All Electronics.
+
+It is a salute to LOST - the clip will play
+every 108 minutes. If you press press a button
+it will record a new clip, but you really could
+just mannually do that with the SAW doll's own
+button if you like.
+
+Carlyn Maw
+May 2010
+ */
+ 
+const int pushButtonPin = 2;
+
+const int playPin = 4;    
+const int recordPin = 10;
+
+const int clipLength = 5000;
+
+int pushButtonState = 0;
+int lastPushButtonState = 0;  
+
+int recordFlag = 0;
+int playFlag = 0;
+
+//TIMING VARIABLES
+long lastMillis= 0;
+long currentMillis = 0;
+
+long waitPeriod = 6480000;
+long flipTime = 0;
+
+
+// The setup() method runs once, when the sketch starts
+
+void setup()   {                
+  // initialize the digital pin as an output:
+  pinMode(pushButtonPin, INPUT); 
+  pinMode(playPin, OUTPUT);  
+  pinMode(recordPin, OUTPUT);   
+  
+  Serial.begin(9600);
+  playClip();
+}
+
+// the loop() method runs over and over again,
+// as long as the Arduino has power
+
+void loop()                     
+{
+  lastPushButtonState = pushButtonState;  // dumps the buttpn State from the last loop into previous holder
+  pushButtonState = digitalRead(pushButtonPin); // refreshes the button state
+
+
+  lastMillis = currentMillis; // dumps the time from the last loop into previous holder
+  currentMillis = millis();  // refreshes time constant
+
+    if (waitPeriod < (currentMillis- flipTime)) {
+      flipTime = currentMillis;  
+      playFlag = true;
+    }  else {
+      playFlag = false;
+    }  
+  
+if (pushButtonState != lastPushButtonState && pushButtonState == false) {
+    delay(50);  // debounce delay needed. 
+    //See Examples > digital > debounce for a better way
+    recordFlag ? recordFlag=false : recordFlag=true;
+  } else {
+    recordFlag = false;
+  } 
+
+//Play the clip if it time and you aren't supposed to be recording
+if (playFlag == true && recordFlag ==false) {
+  Serial.println("Press The Button!");
+  //putting the flip time before keeps
+  flipTime = currentMillis;
+  playClip();
+}
+
+//Record the clip if it's time, play it back and then reset timer
+
+if (recordFlag) {
+   recordClip();
+   playClip();
+   //if you'd like to reset the clock once you've recorded a new clip
+   //uncomment the line below, otherwise it will play the clip on schedule.
+   //if you were recording while it was supposed to be playing, you will
+   //end up shifting when the next one will play a bit.
+   //flipTime = millis();
+} 
+  
+
+}
+
+//------------------------------------------------- END MAIN LOOP
+
+void playClip() {
+  digitalWrite(playPin, HIGH);   // set the LED on
+  delay(clipLength);                  // wait for a second
+  digitalWrite(playPin, LOW);    // set the LED off
+  delay(500); 
+}
+
+
+void recordClip(){
+  digitalWrite(recordPin, HIGH);   // set the LED on
+  delay(clipLength);                  // wait for a second
+  digitalWrite(recordPin, LOW);  
+  delay(500);
+}

@@ -1,0 +1,46 @@
+/*
+This program was written to control the 
+SAW 3 Digital Voice Recorder available at
+All Electronics.
+
+Carlyn Maw
+May 2010
+ 
+ */
+
+int playPin = 4;    
+int recordPin = 10;
+
+
+// The setup() method runs once, when the sketch starts
+
+void setup()   {                
+  // initialize the digital pin as an output:
+  pinMode(playPin, OUTPUT);  
+  pinMode(recordPin, OUTPUT);   
+}
+
+// the loop() method runs over and over again,
+// as long as the Arduino has power
+
+void loop()                     
+{
+playClip();
+recordClip();
+
+}
+
+void playClip() {
+  digitalWrite(playPin, HIGH);   // set the LED on
+  delay(3000);                  // wait for a second
+  digitalWrite(playPin, LOW);    // set the LED off
+  delay(500); 
+}
+
+
+void recordClip(){
+  digitalWrite(recordPin, HIGH);   // set the LED on
+  delay(3000);                  // wait for a second
+  digitalWrite(recordPin, LOW);  
+  delay(500);
+}
