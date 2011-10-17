@@ -1,0 +1,34 @@
+#######################################
+# Syntax Coloring Map SimpleSoftServo
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+SoftwareServo               KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+update                      KEYWORD2
+write                       KEYWORD2
+setMinPulseLength           KEYWORD2
+setMaxulseLength            KEYWORD2
+
+getPulseLength	            KEYWORD2
+setPulseLength	            KEYWORD2
+	
+getMinPulseLength	        KEYWORD2
+setMinPulseLength       	KEYWORD2
+	
+getMaxPulseLength       	KEYWORD2
+setMaxPulseLength       	KEYWORD2
+	
+long getFullPeriod      	KEYWORD2
+setFullPeriod	            KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
