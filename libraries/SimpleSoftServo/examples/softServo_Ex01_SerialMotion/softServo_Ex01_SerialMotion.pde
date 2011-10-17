@@ -27,8 +27,8 @@
 const int servoPin1 = 2;
 const int servoPin2 = 4;
 
-FancyServo myServo1 = FancyServo(servoPin1);
-FancyServo myServo2 = FancyServo(servoPin2);
+SimpleSoftServo myServo1 = SimpleSoftServo(servoPin1);
+SimpleSoftServo myServo2 = SimpleSoftServo(servoPin2);
 
 int value = 0;
 char currentServo = 'A';

@@ -38,7 +38,7 @@ SimpleSoftServo::SimpleSoftServo(int myPin)
     _pulseLength = (_minPulseLength + _maxPulseLength) /2 ;
     _fullPeriod = 20000;
     
-    calculateDegrees();
+    calculateDegreePulses();
     
     _onPeriod = _pulseLength;
     _offPeriod = (_fullPeriod - _pulseLength);
